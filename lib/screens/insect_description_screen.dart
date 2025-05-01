@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import '../database/database.dart';  // Внимавајте на точната патека
+import '../database/database.dart';
 import '../models/insect_model.dart';
 
 class InsectDescriptionScreen extends StatelessWidget {
@@ -15,16 +15,29 @@ class InsectDescriptionScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // Горна слика со копчиња за назад и share
             Stack(
               children: [
                 Container(
                   width: double.infinity,
-                  height: 300,
-                  color: Colors.black,
-                  child: insect.imageUrl.isNotEmpty && File(insect.imageUrl).existsSync()
-                      ? Image.file(File(insect.imageUrl), fit: BoxFit.contain)
-                      : const Icon(Icons.bug_report, size: 100, color: Colors.white),
+                  height: 280,
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(24),
+                      bottomRight: Radius.circular(24),
+                    ),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(24),
+                      bottomRight: Radius.circular(24),
+                    ),
+                    child: insect.imageUrl.isNotEmpty && File(insect.imageUrl).existsSync()
+                        ? Image.file(File(insect.imageUrl), fit: BoxFit.cover)
+                        : const Center(
+                      child: Icon(Icons.bug_report, size: 100, color: Colors.white),
+                    ),
+                  ),
                 ),
                 Positioned(
                   top: 10,
@@ -45,31 +58,43 @@ class InsectDescriptionScreen extends StatelessWidget {
               ],
             ),
 
-            // Описен дел
+            // Description
             Expanded(
               child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.green[200]!, Colors.green[100]!],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
                 ),
                 child: ListView(
                   children: [
-                    Text(
-                      insect.name.toUpperCase(),
-                      style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    Center(
+                      child: Text(
+                        insect.name.toUpperCase(),
+                        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                      ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 12),
                     Text(
                       insect.description,
                       style: const TextStyle(fontSize: 14),
+                      textAlign: TextAlign.justify,
                     ),
-                    const SizedBox(height: 16),
-                    const Text("DETAILS:", style: TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 24),
+                    const Center(
+                      child: Text(
+                        "ДЕТАЛИ",
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ),
                     const SizedBox(height: 12),
                     Wrap(
                       spacing: 12,
                       runSpacing: 12,
+                      alignment: WrapAlignment.center,
                       children: [
                         _buildDetailCard(Icons.public, "Региони", insect.regions),
                         _buildDetailCard(Icons.access_time, "Активен во", insect.activeTime),
@@ -81,26 +106,30 @@ class InsectDescriptionScreen extends StatelessWidget {
                         _buildDetailCard(Icons.calendar_today, "Животен век", insect.lifespan),
                       ],
                     ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
+                    const SizedBox(height: 28),
+                    ElevatedButton.icon(
                       onPressed: () async {
                         try {
                           await DatabaseHelper.instance.addInsect(insect);
                           ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text("Insect added to history!"))
+                            const SnackBar(content: Text("Додадено во историјата.")),
                           );
                         } catch (e) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text("Error adding insect."))
+                            const SnackBar(content: Text("Грешка при зачувување.")),
                           );
                         }
                       },
+                      icon: const Icon(Icons.history, color: Colors.white),
+                      label: const Text("Зачувај во историја"),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.black,
+                        foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
-                      child: const Text("Add to Collection", style: TextStyle(color: Colors.white)),
                     ),
                   ],
                 ),
@@ -114,29 +143,41 @@ class InsectDescriptionScreen extends StatelessWidget {
 
   Widget _buildDetailCard(IconData icon, String label, String value) {
     if (value.isEmpty) return const SizedBox();
-    return Container(
+
+    return SizedBox(
       width: 160,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.green.shade50,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, size: 20, color: Colors.green),
-          const SizedBox(height: 6),
-          Text(
-            label,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: const TextStyle(fontSize: 12),
-          ),
-        ],
+      height: 150,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.grey[300],
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 6,
+              offset: const Offset(0, 3),
+            )
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(icon, size: 22, color: Colors.black87),
+            const SizedBox(height: 6),
+            Text(
+              label,
+              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              value,
+              style: const TextStyle(fontSize: 12, color: Colors.black87),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }

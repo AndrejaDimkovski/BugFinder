@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../database/database.dart';
 import '../models/insect_model.dart';
 import '../screens/insect_description_screen.dart';
+import '../screens/home_screen.dart';
 
 class HistoryScreen extends StatefulWidget {
   @override
@@ -51,45 +52,119 @@ class _HistoryScreenState extends State<HistoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Историја на препознавања')),
-      body: FutureBuilder<List<InsectModel>>(
-        future: insectHistory,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('Нема историја.'));
-          }
+      appBar: AppBar(
+        title: const Text('Историја на препознавања'),
+        backgroundColor: Colors.green[800],
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.green[200]!, Colors.green[100]!],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Column(
+          children: [
+            Expanded(
+              child: FutureBuilder<List<InsectModel>>(
+                future: insectHistory,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
 
-          final insects = snapshot.data!;
+                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        'Нема историја.',
+                        style: TextStyle(fontSize: 20, color: Colors.black54),
+                      ),
+                    );
+                  }
 
-          return ListView.builder(
-            itemCount: insects.length,
-            itemBuilder: (context, index) {
-              final insect = insects[index];
-              return ListTile(
-                leading: insect.imageUrl.isNotEmpty && File(insect.imageUrl).existsSync()
-                    ? Image.file(File(insect.imageUrl), width: 50, height: 50, fit: BoxFit.cover)
-                    : const Icon(Icons.bug_report, size: 50),
-                title: Text(insect.name),
-                subtitle: Text("Видено на: ${insect.lastSeenTime.toLocal()}".split('.').first),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red),
-                  onPressed: () => _confirmDelete(context, insect),
-                ),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => InsectDescriptionScreen(insect: insect),
-                    ),
-                  ).then((_) => _refreshInsectHistory());
+                  final insects = snapshot.data!;
+
+                  return ListView.builder(
+                    padding: const EdgeInsets.all(12),
+                    itemCount: insects.length,
+                    itemBuilder: (context, index) {
+                      final insect = insects[index];
+                      return Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        margin: const EdgeInsets.symmetric(vertical: 8),
+                        elevation: 4,
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.all(12),
+                          leading: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: insect.imageUrl.isNotEmpty && File(insect.imageUrl).existsSync()
+                                ? Image.file(
+                              File(insect.imageUrl),
+                              width: 60,
+                              height: 60,
+                              fit: BoxFit.cover,
+                            )
+                                : const Icon(Icons.bug_report, size: 50, color: Colors.green),
+                          ),
+                          title: Text(
+                            insect.name,
+                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Text(
+                            "Видено на: ${insect.lastSeenTime.toLocal()}".split('.').first,
+                            style: const TextStyle(color: Colors.black87),
+                          ),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () => _confirmDelete(context, insect),
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => InsectDescriptionScreen(insect: insect),
+                              ),
+                            ).then((_) => _refreshInsectHistory());
+                          },
+                        ),
+                      );
+                    },
+                  );
                 },
-              );
-            },
-          );
-        },
+              ),
+            ),
+            Container(
+              width: double.infinity,
+              color: Colors.green[800],
+              padding: EdgeInsets.symmetric(vertical: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Назад',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white,
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.arrow_back, size: 26, color: Colors.white),
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => HomeScreen()),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
