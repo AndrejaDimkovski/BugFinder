@@ -29,12 +29,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Бришење'),
+        title: Text('Бришење', style: TextStyle(color: Color(0xFF2E7D32))),
         content: Text('Дали сте сигурни дека сакате да го избришете "${insect.name}"?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Откажи'),
+            child: Text('Откажи', style: TextStyle(color: Color(0xFF2E7D32))),
           ),
           TextButton(
             onPressed: () async {
@@ -42,7 +42,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
               await DatabaseHelper.instance.deleteInsect(insect.name);
               _refreshInsectHistory();
             },
-            child: const Text('Избриши', style: TextStyle(color: Colors.red)),
+            child: Text('Избриши', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -53,15 +53,17 @@ class _HistoryScreenState extends State<HistoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Историја на препознавања'),
-        backgroundColor: Colors.green[800],
+        title: Text('Историја на препознавања'),
+        centerTitle: true,
+        backgroundColor: Color(0xFF2E7D32),
+        elevation: 0,
       ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.green[200]!, Colors.green[100]!],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+            colors: [Color(0xFF2E7D32), Color(0xFF1B5E20)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
         ),
         child: Column(
@@ -71,14 +73,22 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 future: insectHistory,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
+                    return Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    );
                   }
 
                   if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Center(
+                    return Center(
                       child: Text(
-                        'Нема историја.',
-                        style: TextStyle(fontSize: 20, color: Colors.black54),
+                        'Нема историја на препознавања',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     );
                   }
@@ -86,41 +96,18 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   final insects = snapshot.data!;
 
                   return ListView.builder(
-                    padding: const EdgeInsets.all(12),
+                    padding: EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 80),
                     itemCount: insects.length,
                     itemBuilder: (context, index) {
                       final insect = insects[index];
                       return Card(
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        margin: const EdgeInsets.symmetric(vertical: 8),
                         elevation: 4,
-                        child: ListTile(
-                          contentPadding: const EdgeInsets.all(12),
-                          leading: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: insect.imageUrl.isNotEmpty && File(insect.imageUrl).existsSync()
-                                ? Image.file(
-                              File(insect.imageUrl),
-                              width: 60,
-                              height: 60,
-                              fit: BoxFit.cover,
-                            )
-                                : const Icon(Icons.bug_report, size: 50, color: Colors.green),
-                          ),
-                          title: Text(
-                            insect.name,
-                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Text(
-                            "Видено на: ${insect.lastSeenTime.toLocal()}".split('.').first,
-                            style: const TextStyle(color: Colors.black87),
-                          ),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () => _confirmDelete(context, insect),
-                          ),
+                        margin: EdgeInsets.only(bottom: 16),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(12),
                           onTap: () {
                             Navigator.push(
                               context,
@@ -129,6 +116,61 @@ class _HistoryScreenState extends State<HistoryScreen> {
                               ),
                             ).then((_) => _refreshInsectHistory());
                           },
+                          child: Padding(
+                            padding: EdgeInsets.all(12),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 80,
+                                  height: 80,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    color: Colors.green[50],
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: insect.imageUrl.isNotEmpty && File(insect.imageUrl).existsSync()
+                                        ? Image.file(
+                                      File(insect.imageUrl),
+                                      width: 80,
+                                      height: 80,
+                                      fit: BoxFit.cover,
+                                    )
+                                        : Center(
+                                      child: Icon(Icons.bug_report, size: 40, color: Color(0xFF2E7D32)),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 16),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        insect.name,
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.green[800],
+                                        ),
+                                      ),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        "Видено на: ${insect.lastSeenTime.toLocal()}".split('.').first,
+                                        style: TextStyle(
+                                          color: Colors.green[600],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.delete, color: Colors.red),
+                                  onPressed: () => _confirmDelete(context, insect),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       );
                     },
@@ -136,34 +178,39 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 },
               ),
             ),
-            Container(
-              width: double.infinity,
-              color: Colors.green[800],
-              padding: EdgeInsets.symmetric(vertical: 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Назад',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white,
-                    ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.arrow_back, size: 26, color: Colors.white),
-                    onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => HomeScreen()),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
           ],
+        ),
+      ),
+      bottomNavigationBar: Container(
+        height: 70,
+        decoration: BoxDecoration(
+          color: Color(0xFF2E7D32),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16),
+            topRight: Radius.circular(16),
+          ),
+        ),
+        child: TextButton(
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => HomeScreen()),
+            );
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.arrow_back, color: Colors.white, size: 24),
+              SizedBox(width: 8),
+              Text(
+                'Назад кон главното мени',
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

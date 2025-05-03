@@ -13,8 +13,6 @@ class InsectRecognitionScreen extends StatefulWidget {
 
 class _InsectRecognitionScreenState extends State<InsectRecognitionScreen> {
   final AzureVisionService _azureVisionService = AzureVisionService();
-  File? _imageFile;
-
   final ImagePicker _picker = ImagePicker();
 
   Future<void> _recognizeInsect(String imagePath) async {
@@ -41,9 +39,6 @@ class _InsectRecognitionScreenState extends State<InsectRecognitionScreen> {
     );
 
     if (pickedFile != null) {
-      setState(() {
-        _imageFile = File(pickedFile.path);
-      });
       await _recognizeInsect(pickedFile.path);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -55,56 +50,55 @@ class _InsectRecognitionScreenState extends State<InsectRecognitionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Избери слика"),
-        backgroundColor: Colors.green[800],
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Colors.green[200]!, Colors.green[100]!],
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-                child: SingleChildScrollView(
+      backgroundColor: Color(0xFF2E7D32),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      SizedBox(height: 10),
                       Text(
                         'Препознај инсект преку камера',
-                        style: TextStyle(fontSize: 20),
+                        style: TextStyle(fontSize: 20, color: Colors.white),
+                        textAlign: TextAlign.center,
                       ),
-                      IconButton(
-                        icon: Icon(Icons.camera_alt, size: 50, color: Colors.green[800]),
+                      SizedBox(height: 10),
+                      ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: Color(0xFF2E7D32),
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        icon: Icon(Icons.camera_alt, size: 30),
+                        label: Text("Камера", style: TextStyle(fontSize: 18)),
                         onPressed: () => _getImage(true),
                       ),
-
-                      SizedBox(height: 20),
-
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: Image.network(
-                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTPiImGMFuNM5nGxOdeJX1Bu5hQ8dWsl5_C8Q&s',
-                          fit: BoxFit.cover,
-                          height: MediaQuery.of(context).size.height * 0.5,
-                        ),
-                      ),
-
-                      SizedBox(height: 20),
-
+                      SizedBox(height: 40),
                       Text(
                         'Препознај инсект преку галерија',
-                        style: TextStyle(fontSize: 20),
+                        style: TextStyle(fontSize: 20, color: Colors.white),
+                        textAlign: TextAlign.center,
                       ),
-                      IconButton(
-                        icon: Icon(Icons.photo, size: 50, color: Colors.green[800]),
+                      SizedBox(height: 10),
+                      ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: Color(0xFF2E7D32),
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        icon: Icon(Icons.photo, size: 30),
+                        label: Text("Галерија", style: TextStyle(fontSize: 18)),
                         onPressed: () => _getImage(false),
                       ),
                     ],
@@ -112,37 +106,32 @@ class _InsectRecognitionScreenState extends State<InsectRecognitionScreen> {
                 ),
               ),
             ),
-          ),
-
-          // Назад секција
-          Container(
-            width: double.infinity,
-            color: Colors.green[800],
-            padding: EdgeInsets.symmetric(vertical: 12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Назад',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white,
-                  ),
+            GestureDetector(
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                );
+              },
+              child: Container(
+                width: double.infinity,
+                color: Colors.black26,
+                padding: EdgeInsets.symmetric(vertical: 14),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Назад',
+                      style: TextStyle(fontSize: 18, color: Colors.white),
+                    ),
+                    SizedBox(width: 8),
+                    Icon(Icons.arrow_back, color: Colors.white),
+                  ],
                 ),
-                IconButton(
-                  icon: Icon(Icons.arrow_back, size: 26, color: Colors.white),
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => HomeScreen()),
-                    );
-                  },
-                ),
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

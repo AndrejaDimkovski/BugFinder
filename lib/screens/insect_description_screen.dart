@@ -20,9 +20,9 @@ class InsectDescriptionScreen extends StatelessWidget {
                 Container(
                   width: double.infinity,
                   height: 280,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Colors.black,
-                    borderRadius: const BorderRadius.only(
+                    borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(24),
                       bottomRight: Radius.circular(24),
                     ),
@@ -62,9 +62,9 @@ class InsectDescriptionScreen extends StatelessWidget {
             Expanded(
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Colors.green[200]!, Colors.green[100]!],
+                    colors: [Color(0xFF2E7D32), Color(0xFF2E7D32)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -86,7 +86,7 @@ class InsectDescriptionScreen extends StatelessWidget {
                     const SizedBox(height: 24),
                     const Center(
                       child: Text(
-                        "ДЕТАЛИ",
+                        "DETAILS",
                         style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -96,14 +96,14 @@ class InsectDescriptionScreen extends StatelessWidget {
                       runSpacing: 12,
                       alignment: WrapAlignment.center,
                       children: [
-                        _buildDetailCard(Icons.public, "Региони", insect.regions),
-                        _buildDetailCard(Icons.access_time, "Активен во", insect.activeTime),
-                        _buildDetailCard(Icons.nature, "Цветови", insect.flowerPreference),
-                        _buildDetailCard(Icons.restaurant, "Исхрана", insect.diet),
-                        _buildDetailCard(Icons.warning, "Опасен", insect.dangerous ? "Да" : "Не"),
-                        _buildDetailCard(Icons.category, "Тип", insect.insectType),
-                        _buildDetailCard(Icons.height, "Големина", "${insect.size} см"),
-                        _buildDetailCard(Icons.calendar_today, "Животен век", insect.lifespan),
+                        _buildDetailCard(Icons.public, "Regions", insect.regions),
+                        _buildDetailCard(Icons.access_time, "Active Time", insect.activeTime),
+                        _buildDetailCard(Icons.nature, "Flower Preference", insect.flowerPreference),
+                        _buildDetailCard(Icons.restaurant, "Diet", insect.diet),
+                        _buildDetailCard(Icons.warning, "Dangerous", insect.dangerous ? "Yes" : "No"),
+                        _buildDetailCard(Icons.category, "Type", insect.insectType),
+                        _buildDetailCard(Icons.height, "Size", "${insect.size} cm"),
+                        _buildDetailCard(Icons.calendar_today, "Lifespan", insect.lifespan),
                       ],
                     ),
                     const SizedBox(height: 28),
@@ -112,16 +112,16 @@ class InsectDescriptionScreen extends StatelessWidget {
                         try {
                           await DatabaseHelper.instance.addInsect(insect);
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Додадено во историјата.")),
+                            const SnackBar(content: Text("Added to history.")),
                           );
                         } catch (e) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Грешка при зачувување.")),
+                            const SnackBar(content: Text("Error saving to history.")),
                           );
                         }
                       },
                       icon: const Icon(Icons.history, color: Colors.white),
-                      label: const Text("Зачувај во историја"),
+                      label: const Text("Save to History"),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.black,
                         foregroundColor: Colors.white,
