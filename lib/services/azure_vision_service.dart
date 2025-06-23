@@ -5,7 +5,12 @@ import '../database/database.dart';
 import '../models/insect_model.dart';
 
 class AzureVisionService {
-
+  final String openAIEndpoint = "https://andre-m9n0yn8i-swedencentral.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2024-06-01";
+  final String openAIKey = "B0gyA5UcqWw0GW3I0KFIeV7dAmDWFCwRwCXZvDVQnSe9PJhR7JHJJQQJ99BDACfhMk5XJ3w3AAAAACOGEUM0";
+  final String visionEndpoint = "https://bugfindervision-prediction.cognitiveservices.azure.com/";
+  final String predictionKey = "CDKauZ9OgIPW7yAw00P4ZqJWRWHM2osQR4NgevYMizhoNDuZREV9JQQJ99BDACYeBjFXJ3w3AAAIACOGb68b";
+  final String projectId = "d134dc36-9aad-494f-9e10-8d5a51a1a4dd";
+  final String iterationName = "bug_model_3";
 
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
 

@@ -21,7 +21,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       dbLocation,
-      version: 2, // Верзија 2 за да се осигура дека имаме сите колони
+      version: 2,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
