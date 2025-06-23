@@ -6,67 +6,66 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.green[50],
-      appBar: AppBar(
-        backgroundColor: Colors.green[800],
-        elevation: 0, // Отстранета сенка
-        toolbarHeight: 0, // Сокриен AppBar
-      ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF2E7D32), Color(0xFF22702A)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+      extendBodyBehindAppBar: true,
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          const Image(
+            image: NetworkImage('https://i.pinimg.com/564x/25/d0/5c/25d05c5abceb0d29b11e1bdd0793c11d.jpg'),
+            fit: BoxFit.cover,
           ),
-        ),
-        child: Column(
-          children: [
-            const SizedBox(height: 60), // Поголем растојаб од горниот дел
-            const Text(
-              'Insect Identification',
-              style: TextStyle(
-                fontSize: 28, // Поголем фонт
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 40),
-            Expanded(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _buildActionCard(
-                      context,
-                      icon: Icons.bug_report,
-                      label: 'Identify Insect',
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => InsectRecognitionScreen()),
-                        );
-                      },
+          Container(
+            color: Colors.black.withOpacity(0.3),
+          ),
+          SafeArea(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 24.0),
+                  child: Text(
+                    'Идентификација на инсекти',
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
-                    const SizedBox(height: 40), // Поголем растојаб меѓу картичките
-                    _buildActionCard(
-                      context,
-                      icon: Icons.history,
-                      label: 'History of Insects',
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => HistoryScreen()),
-                        );
-                      },
-                    ),
-                  ],
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-              ),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _buildActionCard(
+                        context,
+                        icon: Icons.bug_report,
+                        label: 'Препознај инсект',
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => InsectRecognitionScreen()),
+                          );
+                        },
+                      ),
+                      SizedBox(height: 40),
+                      _buildActionCard(
+                        context,
+                        icon: Icons.history,
+                        label: 'Историја на инсекти',
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => HistoryScreen()),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 40), // Поголем растојаб од долниот дел
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -80,14 +79,15 @@ class HomeScreen extends StatelessWidget {
     return GestureDetector(
       onTap: onPressed,
       child: Container(
-        width: MediaQuery.of(context).size.width * 0.85, // Шире картички
-        padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 15), // Поголем padding
+        width: MediaQuery.of(context).size.width * 0.85,
+        padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 20),
+        margin: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20), // Позаоблени агли
+          color: Colors.white.withOpacity(0.85),
+          borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withOpacity(0.15),
               spreadRadius: 3,
               blurRadius: 8,
               offset: const Offset(0, 5),
@@ -99,16 +99,16 @@ class HomeScreen extends StatelessWidget {
           children: [
             Icon(
               icon,
-              size: 70, // Поголеми икони
-              color: Colors.green[800],
+              size: 60,
+              color: Color(0xFF1B5E20),
             ),
-            const SizedBox(height: 15),
+            const SizedBox(height: 16),
             Text(
               label,
               style: TextStyle(
-                fontSize: 20, // Поголем фонт
+                fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: Colors.green[800],
+                color: Color(0xFF1B5E20),
               ),
             ),
           ],

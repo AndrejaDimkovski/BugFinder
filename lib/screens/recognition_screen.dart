@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 
 import '../services/azure_vision_service.dart';
 import '../screens/insect_description_screen.dart';
@@ -21,28 +20,27 @@ class _InsectRecognitionScreenState extends State<InsectRecognitionScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => InsectDescriptionScreen(insect: insect),
+          builder: (_) => InsectDescriptionScreen(insect: insect),
         ),
       );
-    } catch (e) {
+    } catch (_) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Грешка при препознавање на инсектот.")),
+        SnackBar(content: Text('Грешка при препознавање на инсектот')),
       );
     }
   }
 
   Future<void> _getImage(bool fromCamera) async {
-    final XFile? pickedFile = await _picker.pickImage(
+    final picked = await _picker.pickImage(
       source: fromCamera ? ImageSource.camera : ImageSource.gallery,
-      maxHeight: 600,
       maxWidth: 600,
+      maxHeight: 600,
     );
-
-    if (pickedFile != null) {
-      await _recognizeInsect(pickedFile.path);
+    if (picked != null) {
+      await _recognizeInsect(picked.path);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Нема избрано слика.")),
+        SnackBar(content: Text('Нема избрано слика')),
       );
     }
   }
@@ -50,86 +48,110 @@ class _InsectRecognitionScreenState extends State<InsectRecognitionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF2E7D32),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: NetworkImage('https://i.pinimg.com/564x/25/d0/5c/25d05c5abceb0d29b11e1bdd0793c11d.jpg'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Container(
+          color: Colors.black.withOpacity(0.3), // Overlay for contrast
+          child: SafeArea(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 24.0),
+                  child: Text(
+                    'Препознај Инсект',
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Expanded(
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        'Препознај инсект преку камера',
-                        style: TextStyle(fontSize: 20, color: Colors.white),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 10),
-                      ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Color(0xFF2E7D32),
-                          padding: EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                        ),
-                        icon: Icon(Icons.camera_alt, size: 30),
-                        label: Text("Камера", style: TextStyle(fontSize: 18)),
-                        onPressed: () => _getImage(true),
+                      _buildMainButton(
+                        icon: Icons.camera_alt,
+                        label: 'Камера',
+                        onTap: () => _getImage(true),
                       ),
                       SizedBox(height: 40),
-                      Text(
-                        'Препознај инсект преку галерија',
-                        style: TextStyle(fontSize: 20, color: Colors.white),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 10),
-                      ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Color(0xFF2E7D32),
-                          padding: EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                        ),
-                        icon: Icon(Icons.photo, size: 30),
-                        label: Text("Галерија", style: TextStyle(fontSize: 18)),
-                        onPressed: () => _getImage(false),
+                      _buildMainButton(
+                        icon: Icons.photo,
+                        label: 'Галерија',
+                        onTap: () => _getImage(false),
                       ),
                     ],
                   ),
                 ),
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => HomeScreen()),
-                );
-              },
-              child: Container(
-                width: double.infinity,
-                color: Colors.black26,
-                padding: EdgeInsets.symmetric(vertical: 14),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Назад',
-                      style: TextStyle(fontSize: 18, color: Colors.white),
+                GestureDetector(
+                  onTap: () => Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (_) => HomeScreen()),
+                  ),
+                  child: Container(
+                    color: Colors.black54,
+                    padding: EdgeInsets.symmetric(vertical: 14),
+                    width: double.infinity,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.arrow_back, color: Colors.white),
+                        SizedBox(width: 8),
+                        Text(
+                          'Назад',
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        )
+                      ],
                     ),
-                    SizedBox(width: 8),
-                    Icon(Icons.arrow_back, color: Colors.white),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMainButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(24),
+      child: Container(
+        width: 280,
+        padding: EdgeInsets.symmetric(vertical: 28),
+        margin: EdgeInsets.symmetric(horizontal: 20),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.85),
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, size: 60, color: Color(0xFF1B5E20)),
+            SizedBox(height: 12),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF1B5E20),
+              ),
+            )
           ],
         ),
       ),

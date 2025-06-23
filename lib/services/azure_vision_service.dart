@@ -6,7 +6,6 @@ import '../models/insect_model.dart';
 
 class AzureVisionService {
 
-
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
 
   Future<InsectModel> processInsectImage(String imagePath) async {
